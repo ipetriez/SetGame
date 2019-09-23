@@ -43,7 +43,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                         <state key="normal" title="Find a Set"/>
                                         <connections>
-                                            <action selector="FindSet:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Dmj-0x-ZFm"/>
+                                            <action selector="findSet:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Dmj-0x-ZFm"/>
                                         </connections>
                                     </button>
                                 </subviews>

@@ -38,10 +38,13 @@ class ViewController: UIViewController {
    
     @IBOutlet private var anotherThreeCards: [UIButton]!
     
-    @IBAction func FindSet(_ sender: UIButton) {
+    @IBAction func findSet(_ sender: UIButton) {
         game.findSet()
         print(game.foundSetArray)
         updateViewFromModel()
+        if game.foundSetArray.isEmpty {
+            consoleLabel.text = "There is no set on the board."
+        }
     }
     
     @IBOutlet private var cardTable: [UIButton]!
