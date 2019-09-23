@@ -35,10 +35,16 @@ class ViewController: UIViewController {
             consoleLabel.text = "There's no more cards in the deck."
         }
     }
+   
+    @IBOutlet private var anotherThreeCards: [UIButton]!
+    
+    @IBAction func FindSet(_ sender: UIButton) {
+        game.findSet()
+        print(game.foundSetArray)
+        updateViewFromModel()
+    }
     
     @IBOutlet private var cardTable: [UIButton]!
-    
-    @IBOutlet private var anotherThreeCards: [UIButton]!
     
     @IBAction private func touchCard(_ sender: UIButton) {
         let temp = game.matchedCards.count
@@ -59,7 +65,7 @@ class ViewController: UIViewController {
         }
         updateViewFromModel()
     }
-    
+
     private lazy var game = SetGame(numberOfCards: cardTable.count)
     
     private func render(card: Card) -> String {
@@ -117,12 +123,30 @@ class ViewController: UIViewController {
                 button.setAttributedTitle(NSAttributedString(string: render(card: card), attributes: [.strokeWidth:5.0, .strokeColor:#colorLiteral(red: 0.4666666687, green: 0.7647058964, blue: 0.2666666806, alpha: 1)]), for: UIControl.State.normal)
             }
             
+            if game.foundSetArray.count > 3 {
+                for number in game.foundSetArray {
+                    cardTable[number].layer.backgroundColor = #colorLiteral(red: 0.9995340705, green: 0.988355577, blue: 0.4726552367, alpha: 0.7518193493)
+                }
+            } else if game.foundSetArray.count < 3 {
+                for index in cardTable.indices {
+                    cardTable[index].layer.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
+                }
+            }
+            
+            
             if game.matchingArray.contains(game.cardTable[index]) {
                 cardTable[index].layer.borderWidth = 3.0
-                cardTable[index].layer.borderColor = UIColor.blue.cgColor
+                cardTable[index].layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
             } else {
                 cardTable[index].layer.borderWidth = 0
-                cardTable[index].layer.borderColor = UIColor.blue.cgColor
+                cardTable[index].layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
+            }
+            
+            if game.matchingArray.count == 3 && game.qualify(array: game.matchingArray) == true {
+                consoleLabel.text = "It's a set!"
+                game.foundSetArray.removeAll()
+            } else if game.matchingArray.count == 3 && game.qualify(array: game.matchingArray) == false {
+                consoleLabel.text = "It's not a set."
             }
             
             for card in cardTable {

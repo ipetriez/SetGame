@@ -14,46 +14,22 @@ struct SetGame {
     var cardTable = [Card]()
     private(set) var matchedCards = [Card]()
     private(set) var matchingArray = [Card]()
+    var foundSetArray = [Int]()
     private(set) var numberOfSets = 0
     
-    mutating private func qualify(array: [Card]) {
-        if matchingArray.count == 3 {
-            if (matchingArray[0].color == matchingArray[1].color && matchingArray[1].color == matchingArray[2].color) || (matchingArray[0].color != matchingArray[1].color && matchingArray[1].color != matchingArray[2].color && matchingArray[0].color != matchingArray[2].color) {
-                if (matchingArray[0].numberOfObjects == matchingArray[1].numberOfObjects && matchingArray[1].numberOfObjects == matchingArray[2].numberOfObjects) || (matchingArray[0].numberOfObjects != matchingArray[1].numberOfObjects && matchingArray[1].numberOfObjects != matchingArray[2].numberOfObjects && matchingArray[0].numberOfObjects != matchingArray[2].numberOfObjects) {
-                    if (matchingArray[0].shape == matchingArray[1].shape && matchingArray[1].shape == matchingArray[2].shape) || (matchingArray[0].shape != matchingArray[1].shape && matchingArray[1].shape != matchingArray[2].shape && matchingArray[0].shape != matchingArray[2].shape) {
-                        if (matchingArray[0].shading == matchingArray[1].shading && matchingArray[1].shading == matchingArray[2].shading) || (matchingArray[0].shading != matchingArray[1].shading && matchingArray[1].shading != matchingArray[2].shading && matchingArray[0].shading != matchingArray[2].shading) {
-                            print("It's set!")
-                            numberOfSets += 1
-                            for _ in 0..<matchingArray.count {
-                                if !currentDeck.isEmpty {
-                                    if cardTable.count <= 12 {
-                                        matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: matchingArray.removeFirst())!))
-                                        cardTable.append(currentDeck.remove(at: currentDeck.count.arc4random))
-                                    } else {
-                                        matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: matchingArray.removeFirst())!))
-                                    }
-                                } else {
-                                    let index = cardTable.firstIndex(of: matchingArray.removeFirst())
-                                    cardTable[index!].isMatched = true
-                                }
-                            }
-                        } else {
-                            print("It's not a set.")
-                            matchingArray.removeAll()
-                        }
-                    } else {
-                        print("It's not a set.")
-                        matchingArray.removeAll()
-                    }
-                } else {
-                    print("It's not a set.")
-                    matchingArray.removeAll()
-                }
-            } else {
-                print("It's not a set.")
-                matchingArray.removeAll()
+    mutating func qualify(array: [Card]) -> Bool {
+        if array.count == 3 {
+            if (array[0].color == array[1].color && array[1].color == array[2].color) || (array[0].color != array[1].color && array[1].color != array[2].color && array[0].color != array[2].color),
+                
+                (array[0].numberOfObjects == array[1].numberOfObjects && array[1].numberOfObjects == array[2].numberOfObjects) || (array[0].numberOfObjects != array[1].numberOfObjects && array[1].numberOfObjects != array[2].numberOfObjects && array[0].numberOfObjects != array[2].numberOfObjects),
+                
+                (array[0].shape == array[1].shape && array[1].shape == array[2].shape) || (array[0].shape != array[1].shape && array[1].shape != array[2].shape && array[0].shape != array[2].shape),
+                
+                (array[0].shading == array[1].shading && array[1].shading == array[2].shading) || (array[0].shading != array[1].shading && array[1].shading != array[2].shading && array[0].shading != array[2].shading) {
+                return true
             }
         }
+        return false
     }
     
     mutating func chooseCard(at index: Int) {
@@ -64,14 +40,95 @@ struct SetGame {
                 matchingArray.append(cardTable[index])
                 print(index)
                 print(cardTable[index])
+            } else if matchingArray.count == 3 && !matchingArray.contains(cardTable[index]) {
+                if qualify(array: matchingArray) == true {
+                    print("It's set!")
+                    numberOfSets += 1
+                    for _ in 0..<matchingArray.count {
+                        if !currentDeck.isEmpty {
+                            if cardTable.count <= 12 {
+                                matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: matchingArray.removeFirst())!))
+                                cardTable.append(currentDeck.remove(at: currentDeck.count.arc4random))
+                            } else {
+                                matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: matchingArray.removeFirst())!))
+                            }
+                        } else {
+                            let index = cardTable.firstIndex(of: matchingArray.removeFirst())
+                            cardTable[index!].isMatched = true
+                        }
+                    }
+                } else {
+                    print("It's not a set.")
+                    matchingArray.removeAll()
+                }
             } else {
                 if let index = matchingArray.firstIndex(of: cardTable[index]) {
                     matchingArray.remove(at: index)
                 }
             }
-            qualify(array: matchingArray)
         }
     }
+    
+    mutating func findSet() {
+        foundSetArray = []
+        var tempArray = [Card]()
+        for firstElement in cardTable {
+            if qualify(array: tempArray) == true {
+                for card in tempArray {
+                    if cardTable.contains(card) {
+                        foundSetArray.append(cardTable.firstIndex(of: card)!)
+                    }
+                }
+                break
+            } else if tempArray.count < 3, !tempArray.contains(firstElement) {
+                tempArray.append(firstElement)
+            } else if tempArray.count == 3, qualify(array: tempArray) == false, tempArray.contains(firstElement) {
+                let index = tempArray.firstIndex(of: firstElement)
+                tempArray.remove(at: index!)
+            } else if tempArray.count == 3, qualify(array: tempArray) == false, !tempArray.contains(firstElement) {
+                tempArray.removeFirst()
+                tempArray.append(firstElement)
+            }
+            for secondElement in cardTable {
+                if qualify(array: tempArray) == true {
+                    for card in tempArray {
+                        if cardTable.contains(card) {
+                            foundSetArray.append(cardTable.firstIndex(of: card)!)
+                        }
+                    }
+                    break
+                } else if tempArray.count < 3, !tempArray.contains(secondElement) {
+                    tempArray.append(secondElement)
+                } else if tempArray.count == 3, qualify(array: tempArray) == false, tempArray.contains(secondElement) {
+                    let index = tempArray.firstIndex(of: secondElement)
+                    tempArray.remove(at: index!)
+                } else if tempArray.count == 3, qualify(array: tempArray) == false, !tempArray.contains(secondElement) {
+                    tempArray.remove(at: 1)
+                    tempArray.append(secondElement)
+                }
+                for thirdElement in cardTable {
+                    if qualify(array: tempArray) == true {
+                        for card in tempArray {
+                            if cardTable.contains(card) {
+                                foundSetArray.append(cardTable.firstIndex(of: card)!)
+                            }
+                        }
+                        break
+                    } else if tempArray.count < 3, !tempArray.contains(thirdElement) {
+                        tempArray.append(thirdElement)
+                    } else if tempArray.count == 3, qualify(array: tempArray) == false, tempArray.contains(thirdElement) {
+                        let index = tempArray.firstIndex(of: thirdElement)
+                        tempArray.remove(at: index!)
+                    } else if tempArray.count == 3, qualify(array: tempArray) == false, !tempArray.contains(thirdElement) {
+                        tempArray.removeLast()
+                        tempArray.append(thirdElement)
+                    }
+                }
+            }
+        }
+    }
+    
+    
     
     mutating func startNewGame() {
         for index in matchedCards.indices {
