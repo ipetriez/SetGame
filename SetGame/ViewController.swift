@@ -13,8 +13,8 @@ class ViewController: UIViewController {
     
     @IBAction private func newGame(_ sender: UIButton) {
         game.startNewGame()
-        for i in anotherThreeCards {
-            i.setAttributedTitle(NSAttributedString(string: "", attributes: [.strokeWidth:-5.0, .foregroundColor: #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), .strokeColor:#colorLiteral(red: 0.5818830132, green: 0.2156915367, blue: 1, alpha: 1)]), for: UIControl.State.normal)
+        for card in anotherThreeCards {
+            card.setAttributedTitle(NSAttributedString(string: "", attributes: [.strokeWidth:-5.0, .foregroundColor: #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1), .strokeColor:#colorLiteral(red: 0.5818830132, green: 0.2156915367, blue: 1, alpha: 1)]), for: UIControl.State.normal)
         }
         while cardTable.count > 12 {
             cardTable.removeLast()
