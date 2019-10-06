@@ -2,7 +2,7 @@
 //  SetGameMainSuperView.swift
 //  SetGame
 //
-//  Created by Sergey Petrosyan on 9/26/19.
+//  Created by Sergey Petrosyan on 10/6/19.
 //  Copyright © 2019 Sergey Petrosyan. All rights reserved.
 //
 

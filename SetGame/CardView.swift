@@ -8,156 +8,198 @@
 
 import UIKit
 
-class CardView: CardTableView {
+class CardView: UIButton {
     
+    // MARK: Internal types.
+    enum Shape {
+        case oval
+        case diamond
+        case squiggle
+    }
+    
+    enum Shading {
+        case open
+        case striped
+        case solid
+    }
+    
+    // MARK: Stored properties.
+    var numberOfObjects: Int? {
+        didSet{
+            setNeedsDisplay()
+            setNeedsLayout()
+        }
+    }
+    var shape: Shape? {
+        didSet{
+            setNeedsDisplay()
+            setNeedsLayout()
+        }
+    }
+    var shading: Shading?{
+        didSet{
+            setNeedsDisplay()
+            setNeedsLayout()
+        }
+    }
+    var color: UIColor?{
+        didSet{
+            setNeedsDisplay()
+            setNeedsLayout()
+        }
+    }
+    
+
+    
+    //MARK: The function, where all actual drawing takes place.
     override func draw(_ rect: CGRect) {
         let cardsBackground = UIBezierPath(roundedRect: bounds, cornerRadius: 16.0)
         UIColor.white.setFill()
         cardsBackground.fill()
         
-        let upperOrigin = CGPoint(x: 100, y: 40)
-        let upperMidOrigin = CGPoint(x: 100, y: 80)
-        let centerOrigin = CGPoint(x: 100, y: 120)
-        let lowerMidOrigin = CGPoint(x: 100, y: 160)
-        let lowerOrigin = CGPoint(x: 100, y: 200)
-        
-        enum Shape {
-            case oval
-            case diamond
-            case squiggle
-        }
-        
-        enum Shading {
-            case open
-            case striped
-            case solid
-        }
+        //MARK: Defining drawing margins for the shapes inside a card.
+        let upperOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 49))
+        let upperMidOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 30))
+        let centerOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 15))
+        let lowerMidOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY + 5))
+        let lowerOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY + 19))
         
         func drawOval(in amounts: Int, of color: UIColor, with shading: Shading) {
-            let oval = UIBezierPath()
-            
-            var numberOfElements: [CGPoint] {
-                get {
-                    switch amounts {
-                    case 1:
-                        return [centerOrigin]
-                    case 2:
-                        return [upperMidOrigin, lowerMidOrigin]
-                    case 3:
-                        return [upperOrigin, centerOrigin, lowerOrigin]
-                    default:
-                        return []
+            switch shape {
+            case .oval:
+                let oval = UIBezierPath()
+                
+                var numberOfElements: [CGPoint] {
+                    get {
+                        switch amounts {
+                        case 1:
+                            return [centerOrigin]
+                        case 2:
+                            return [upperMidOrigin, lowerMidOrigin]
+                        case 3:
+                            return [upperOrigin, centerOrigin, lowerOrigin]
+                        default:
+                            return []
+                        }
                     }
                 }
-            }
-            
-            for origin in numberOfElements {
-                oval.move(to: origin)
-                oval.addLine(to: CGPoint(x: (origin.x + 40), y: (origin.y)))
-                oval.addCurve(to: CGPoint(x: (origin.x + 40), y: (origin.y + 60)), controlPoint1: CGPoint(x: (origin.x + 61), y: (origin.y + 3)), controlPoint2: CGPoint(x: (origin.x + 61), y: (origin.y + 57)))
-                oval.addLine(to: CGPoint(x: (origin.x - 40), y: (origin.y + 60)))
-                oval.addCurve(to: CGPoint(x: (origin.x - 40), y: (origin.y)), controlPoint1: CGPoint(x: (origin.x - 61), y: (origin.y + 57)), controlPoint2: CGPoint(x: (origin.x - 61), y: (origin.y + 3)))
-                oval.close()
-            }
-            
-            color.setStroke()
-            color.setFill()
-            oval.lineWidth = 3.0
-            oval.stroke()
-            oval.addClip()
-            
-            switch shading {
-            case .striped:
-                addStriping()
-            case .solid:
-                oval.fill()
+                
+                for origin in numberOfElements {
+                    oval.move(to: origin)
+                    oval.addLine(to: CGPoint(x: (origin.x + 20), y: (origin.y)))
+                    oval.addCurve(to: CGPoint(x: (origin.x + 20), y: (origin.y + 30)), controlPoint1: CGPoint(x: (origin.x + 30.5), y: (origin.y + 1.5)), controlPoint2: CGPoint(x: (origin.x + 30.5), y: (origin.y + 28.5)))
+                    oval.addLine(to: CGPoint(x: (origin.x - 20), y: (origin.y + 30)))
+                    oval.addCurve(to: CGPoint(x: (origin.x - 20), y: (origin.y)), controlPoint1: CGPoint(x: (origin.x - 30.5), y: (origin.y + 28.5)), controlPoint2: CGPoint(x: (origin.x - 30.5), y: (origin.y + 1.5)))
+                    oval.close()
+                }
+                
+                color.setStroke()
+                color.setFill()
+                oval.lineWidth = 3.0
+                oval.stroke()
+                oval.addClip()
+                
+                switch shading {
+                case .striped:
+                    addStriping()
+                case .solid:
+                    oval.fill()
+                default:
+                    break
+                }
             default:
                 break
             }
+            
         }
-        
         
         func drawSquiggle(in amounts: Int, of color: UIColor, with shading: Shading) {
-            let squiggle = UIBezierPath()
-            
-            var numberOfElements: [CGPoint] {
-                get {
-                    switch amounts {
-                    case 1:
-                        return [centerOrigin]
-                    case 2:
-                        return [upperMidOrigin, lowerMidOrigin]
-                    case 3:
-                        return [upperOrigin, centerOrigin, lowerOrigin]
-                    default:
-                        return []
+            switch shape {
+            case .squiggle:
+                let squiggle = UIBezierPath()
+                var numberOfElements: [CGPoint] {
+                    get {
+                        switch amounts {
+                        case 1:
+                            return [centerOrigin]
+                        case 2:
+                            return [upperMidOrigin, lowerMidOrigin]
+                        case 3:
+                            return [upperOrigin, centerOrigin, lowerOrigin]
+                        default:
+                            return []
+                        }
                     }
                 }
-            }
-            
-            for origin in numberOfElements {
-                squiggle.move(to: origin)
-                squiggle.addCurve(to: CGPoint(x: (origin.x + 60), y: origin.y), controlPoint1: CGPoint(x: (origin.x + 30), y: (origin.y + 25)), controlPoint2: CGPoint(x: (origin.x + 50), y: origin.y))
-                squiggle.addCurve(to: CGPoint(x: (origin.x + 15), y: (origin.y + 55)), controlPoint1: CGPoint(x: (origin.x + 75), y: CGFloat(origin.y + 10)), controlPoint2: CGPoint(x: (origin.x + 45), y: (origin.y + 60)))
-                squiggle.addCurve(to: CGPoint(x: CGFloat(origin.x - 60), y: (origin.y + 55)), controlPoint1: CGPoint(x: (origin.x - 30), y: (origin.y + 30)), controlPoint2: CGPoint(x: (origin.x - 30), y: (origin.y + 60)))
-                squiggle.addCurve(to: origin, controlPoint1: CGPoint(x: (origin.x - 65), y: (origin.y + 20)), controlPoint2: CGPoint(x: (origin.x - 20), y: (origin.y - 10)))
-                squiggle.close()
-            }
-            
-            color.setStroke()
-            color.setFill()
-            squiggle.lineWidth = 3.0
-            squiggle.stroke()
-            squiggle.addClip()
-            
-            switch shading {
-            case .striped:
-                addStriping()
-            case .solid:
-                squiggle.fill()
+                for origin in numberOfElements {
+                    squiggle.move(to: origin)
+                    squiggle.addCurve(to: CGPoint(x: (origin.x + 30), y: origin.y), controlPoint1: CGPoint(x: (origin.x + 15), y: (origin.y + 12.5)), controlPoint2: CGPoint(x: (origin.x + 25), y: origin.y))
+                    squiggle.addCurve(to: CGPoint(x: (origin.x + 7.5), y: (origin.y + 27.5)), controlPoint1: CGPoint(x: (origin.x + 37.5), y: CGFloat(origin.y + 5)), controlPoint2: CGPoint(x: (origin.x + 22.5), y: (origin.y + 30)))
+                    squiggle.addCurve(to: CGPoint(x: CGFloat(origin.x - 30), y: (origin.y + 27.5)), controlPoint1: CGPoint(x: (origin.x - 15), y: (origin.y + 15)), controlPoint2: CGPoint(x: (origin.x - 15), y: (origin.y + 30)))
+                    squiggle.addCurve(to: origin, controlPoint1: CGPoint(x: (origin.x - 32.5), y: (origin.y + 10)), controlPoint2: CGPoint(x: (origin.x - 10), y: (origin.y - 5)))
+                    squiggle.close()
+                }
+                color.setStroke()
+                color.setFill()
+                squiggle.lineWidth = 3.0
+                squiggle.stroke()
+                squiggle.addClip()
+                
+                switch shading {
+                case .striped:
+                    addStriping()
+                case .solid:
+                    squiggle.fill()
+                default:
+                    break
+                }
             default:
                 break
             }
         }
         
-        
         func drawDiamond(in amounts: Int, of color: UIColor, with shading: Shading) {
-            let diamond = UIBezierPath()
-            
-            var numberOfElements: [CGPoint] {
-                get {
-                    switch amounts {
-                    case 1:
-                        return [centerOrigin]
-                    case 2:
-                        return [upperMidOrigin, lowerMidOrigin]
-                    case 3:
-                        return [upperOrigin, centerOrigin, lowerOrigin]
-                    default:
-                        return []
+            switch shape {
+            case .diamond:
+                            let diamond = UIBezierPath()
+                
+                var numberOfElements: [CGPoint] {
+                    get {
+                        switch amounts {
+                        case 1:
+                            return [centerOrigin]
+                        case 2:
+                            return [upperMidOrigin, lowerMidOrigin]
+                        case 3:
+                            return [upperOrigin, centerOrigin, lowerOrigin]
+                        default:
+                            return []
+                        }
                     }
                 }
-            }
-            
-            for origin in numberOfElements {
-                diamond.move(to: origin)
-                diamond.addLine(to: CGPoint(x: (origin.x + 60), y: (origin.y + 30)))
-                diamond.addLine(to: CGPoint(x: origin.x, y: (origin.y + 60)))
-                diamond.addLine(to: CGPoint(x: (origin.x - 60), y: (origin.y + 30)))
-                diamond.close()
-            }
-            
-            color.setStroke()
-            color.setFill()
-            diamond.lineWidth = 3.0
-            diamond.stroke()
-            diamond.addClip()
-            
-            switch shading {
-            case .striped:
-                addStriping()
-            case .solid:
-                diamond.fill()
+                
+                for origin in numberOfElements {
+                    diamond.move(to: origin)
+                    diamond.addLine(to: CGPoint(x: (origin.x + 30), y: (origin.y + 15)))
+                    diamond.addLine(to: CGPoint(x: origin.x, y: (origin.y + 30)))
+                    diamond.addLine(to: CGPoint(x: (origin.x - 30), y: (origin.y + 15)))
+                    diamond.close()
+                }
+                
+                color.setStroke()
+                color.setFill()
+                diamond.lineWidth = 3.0
+                diamond.stroke()
+                diamond.addClip()
+                
+                switch shading {
+                case .striped:
+                    addStriping()
+                case .solid:
+                    diamond.fill()
+                default:
+                    break
+                }
             default:
                 break
             }
@@ -185,6 +227,28 @@ class CardView: CardTableView {
         }
         
         
+        guard let numberOfObjects = numberOfObjects else {
+            return
+        }
+        guard let color = color else {
+            return
+        }
+        guard let shading = shading else {
+            return
+        }
+        guard let shape = shape else {
+            return
+        }
+        
+        switch shape {
+        case .diamond:
+            drawDiamond(in: numberOfObjects, of: color, with: shading)
+        case .oval:
+            drawOval(in: numberOfObjects, of: color, with: shading)
+        case .squiggle:
+            drawSquiggle(in: numberOfObjects, of: color, with: shading)
+        }
+        
     }
-
 }
+

@@ -13,10 +13,11 @@
 		703DD59B23031DD000CB5607 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 703DD59A23031DD000CB5607 /* Assets.xcassets */; };
 		703DD59E23031DD000CB5607 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 703DD59C23031DD000CB5607 /* LaunchScreen.storyboard */; };
 		703DD5A92303209700CB5607 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703DD5A82303209700CB5607 /* SetGame.swift */; };
-		7095994E233CD358002F90BF /* SetGameMainSuperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7095994D233CD358002F90BF /* SetGameMainSuperView.swift */; };
 		70959950233CE263002F90BF /* CardTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7095994F233CE263002F90BF /* CardTableView.swift */; };
 		70AFDBC723103AF800DC32C3 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70AFDBC623103AF700DC32C3 /* Card.swift */; };
 		70DCD816233D233C00CE2A88 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70DCD815233D233C00CE2A88 /* CardView.swift */; };
+		70EBB3B02349EEE800D14C9A /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70EBB3AF2349EEE800D14C9A /* Grid.swift */; };
+		70EBB3B22349FDFF00D14C9A /* SetGameMainSuperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70EBB3B12349FDFF00D14C9A /* SetGameMainSuperView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,10 +29,11 @@
 		703DD59D23031DD000CB5607 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		703DD59F23031DD000CB5607 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		703DD5A82303209700CB5607 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
-		7095994D233CD358002F90BF /* SetGameMainSuperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameMainSuperView.swift; sourceTree = "<group>"; };
 		7095994F233CE263002F90BF /* CardTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardTableView.swift; sourceTree = "<group>"; };
 		70AFDBC623103AF700DC32C3 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 		70DCD815233D233C00CE2A88 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		70EBB3AF2349EEE800D14C9A /* Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		70EBB3B12349FDFF00D14C9A /* SetGameMainSuperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameMainSuperView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,9 +67,10 @@
 			isa = PBXGroup;
 			children = (
 				703DD5A72303207400CB5607 /* Supporting Files */,
+				70EBB3B12349FDFF00D14C9A /* SetGameMainSuperView.swift */,
 				703DD59523031DCF00CB5607 /* ViewController.swift */,
-				7095994D233CD358002F90BF /* SetGameMainSuperView.swift */,
 				7095994F233CE263002F90BF /* CardTableView.swift */,
+				70EBB3AF2349EEE800D14C9A /* Grid.swift */,
 				70DCD815233D233C00CE2A88 /* CardView.swift */,
 				703DD59723031DCF00CB5607 /* Main.storyboard */,
 				703DD5A82303209700CB5607 /* SetGame.swift */,
@@ -160,7 +163,8 @@
 			files = (
 				70DCD816233D233C00CE2A88 /* CardView.swift in Sources */,
 				703DD59623031DCF00CB5607 /* ViewController.swift in Sources */,
-				7095994E233CD358002F90BF /* SetGameMainSuperView.swift in Sources */,
+				70EBB3B22349FDFF00D14C9A /* SetGameMainSuperView.swift in Sources */,
+				70EBB3B02349EEE800D14C9A /* Grid.swift in Sources */,
 				703DD5A92303209700CB5607 /* SetGame.swift in Sources */,
 				703DD59423031DCF00CB5607 /* AppDelegate.swift in Sources */,
 				70959950233CE263002F90BF /* CardTableView.swift in Sources */,

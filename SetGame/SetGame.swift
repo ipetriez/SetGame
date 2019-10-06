@@ -10,6 +10,7 @@ import Foundation
 
 struct SetGame {
     
+    //MARK: All stored properties.
     var currentDeck = [Card]()
     var cardTable = [Card]()
     private(set) var matchedCards = [Card]()
@@ -17,6 +18,8 @@ struct SetGame {
     var foundSetArray = [Int]()
     private(set) var numberOfSets = 0
     
+    
+    //MARK: This function is responsible for the checking whether the chosen cards make up a set or not.
     mutating func qualify(array: [Card]) -> Bool {
         if array.count == 3 {
             if (array[0].color == array[1].color && array[1].color == array[2].color) || (array[0].color != array[1].color && array[1].color != array[2].color && array[0].color != array[2].color),
@@ -32,6 +35,8 @@ struct SetGame {
         return false
     }
     
+    
+    //MARK: This function is responsible for the behaviour of the model, when the user touches a card at any given moment of time.
     mutating func chooseCard(at index: Int) {
         assert(cardTable.indices.contains(index), "SetGame.chooseCard(at: \(index)): The card at chosen index is not on the card table now.")
         
@@ -69,6 +74,8 @@ struct SetGame {
         }
     }
     
+    
+    //MARK: This function is responsible for the "Find a Set" button operation.
     mutating func findSet() {
         foundSetArray = []
         var tempArray = [Card]()
@@ -129,7 +136,39 @@ struct SetGame {
     }
     
     
+    //MARK: Method in charge of dealing the game's cards.
+    /// - Parameter forAmount: The number of cards to be dealt.
+    mutating func dealCards(forAmount amount: Int = 3) {
+      guard amount > 0 else { return }
+      guard currentDeck.count >= amount else {
+        
+        for card in matchedCards {
+            let index = cardTable.firstIndex(of: card)!
+          cardTable.remove(at: index)
+        }
+        
+        return
+      }
+      
+      var cardsToDeal = [Card]()
+      
+      for _ in 0..<amount {
+        cardsToDeal.append(currentDeck.removeFirst())
+      }
+      
+      for (index, card) in cardTable.enumerated() {
+        if matchedCards.contains(card) {
+          cardTable[index] = cardsToDeal.removeFirst()
+        }
+      }
+      
+      if !cardsToDeal.isEmpty {
+        cardTable += cardsToDeal
+      }
+    }
     
+    
+    //MARK: This function is responsible for the "New game" button operation.
     mutating func startNewGame() {
         for index in matchedCards.indices {
             currentDeck.append(matchedCards[index])
@@ -152,6 +191,7 @@ struct SetGame {
     }
     
     
+    //MARK: Initialization of all cards in the deck.
     init(numberOfCards: Int) {
         for _ in 1...81 {
             currentDeck.append(Card())
@@ -163,7 +203,7 @@ struct SetGame {
 }
 
 
-
+//MARK: Extension for simplifying the randomization process.
 extension Int {
     var arc4random: Int {
         if self > 0 {

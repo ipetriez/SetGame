@@ -35,11 +35,11 @@ struct Card: Hashable {
     private static var definedShape = ""
     private static func defineShape() -> String {
         if (identifierFactory > 0 && identifierFactory <= 9) || (identifierFactory > 27 && identifierFactory <= 36) || (identifierFactory > 54 && identifierFactory <= 63) {
-            definedShape = "Round"
+            definedShape = "Oval"
         } else if (identifierFactory > 9 && identifierFactory <= 18) || (identifierFactory > 36 && identifierFactory <= 45) || (identifierFactory > 63 && identifierFactory <= 72) {
-            definedShape = "Square"
+            definedShape = "Diamond"
         } else {
-            definedShape = "Triangle"
+            definedShape = "Squiggle"
         }
         return definedShape
     }
