@@ -53,16 +53,16 @@ class CardView: UIButton {
     
     //MARK: The function, where all actual drawing takes place.
     override func draw(_ rect: CGRect) {
-        let cardsBackground = UIBezierPath(roundedRect: bounds, cornerRadius: 16.0)
+        let cardsBackground = UIBezierPath(roundedRect: bounds, cornerRadius: 12.0)
         UIColor.white.setFill()
         cardsBackground.fill()
         
         //MARK: Defining drawing margins for the shapes inside a card.
-        let upperOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 49))
-        let upperMidOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 30))
-        let centerOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 15))
-        let lowerMidOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY + 5))
-        let lowerOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY + 19))
+        let upperOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 36))
+        let upperMidOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 23))
+        let centerOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY - 10))
+        let lowerMidOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY + 3))
+        let lowerOrigin = CGPoint(x: cardsBackground.bounds.midX, y: (cardsBackground.bounds.midY + 16))
         
         func drawOval(in amounts: Int, of color: UIColor, with shading: Shading) {
             switch shape {
@@ -86,10 +86,10 @@ class CardView: UIButton {
                 
                 for origin in numberOfElements {
                     oval.move(to: origin)
-                    oval.addLine(to: CGPoint(x: (origin.x + 20), y: (origin.y)))
-                    oval.addCurve(to: CGPoint(x: (origin.x + 20), y: (origin.y + 30)), controlPoint1: CGPoint(x: (origin.x + 30.5), y: (origin.y + 1.5)), controlPoint2: CGPoint(x: (origin.x + 30.5), y: (origin.y + 28.5)))
-                    oval.addLine(to: CGPoint(x: (origin.x - 20), y: (origin.y + 30)))
-                    oval.addCurve(to: CGPoint(x: (origin.x - 20), y: (origin.y)), controlPoint1: CGPoint(x: (origin.x - 30.5), y: (origin.y + 28.5)), controlPoint2: CGPoint(x: (origin.x - 30.5), y: (origin.y + 1.5)))
+                    oval.addLine(to: CGPoint(x: (origin.x + 14), y: (origin.y)))
+                    oval.addCurve(to: CGPoint(x: (origin.x + 14), y: (origin.y + 21)), controlPoint1: CGPoint(x: (origin.x + 21.35), y: (origin.y + 1.05)), controlPoint2: CGPoint(x: (origin.x + 21.35), y: (origin.y + 19.95)))
+                    oval.addLine(to: CGPoint(x: (origin.x - 14), y: (origin.y + 21)))
+                    oval.addCurve(to: CGPoint(x: (origin.x - 14), y: (origin.y)), controlPoint1: CGPoint(x: (origin.x - 21.35), y: (origin.y + 19.95)), controlPoint2: CGPoint(x: (origin.x - 21.35), y: (origin.y + 1.05)))
                     oval.close()
                 }
                 
@@ -133,10 +133,10 @@ class CardView: UIButton {
                 }
                 for origin in numberOfElements {
                     squiggle.move(to: origin)
-                    squiggle.addCurve(to: CGPoint(x: (origin.x + 30), y: origin.y), controlPoint1: CGPoint(x: (origin.x + 15), y: (origin.y + 12.5)), controlPoint2: CGPoint(x: (origin.x + 25), y: origin.y))
-                    squiggle.addCurve(to: CGPoint(x: (origin.x + 7.5), y: (origin.y + 27.5)), controlPoint1: CGPoint(x: (origin.x + 37.5), y: CGFloat(origin.y + 5)), controlPoint2: CGPoint(x: (origin.x + 22.5), y: (origin.y + 30)))
-                    squiggle.addCurve(to: CGPoint(x: CGFloat(origin.x - 30), y: (origin.y + 27.5)), controlPoint1: CGPoint(x: (origin.x - 15), y: (origin.y + 15)), controlPoint2: CGPoint(x: (origin.x - 15), y: (origin.y + 30)))
-                    squiggle.addCurve(to: origin, controlPoint1: CGPoint(x: (origin.x - 32.5), y: (origin.y + 10)), controlPoint2: CGPoint(x: (origin.x - 10), y: (origin.y - 5)))
+                    squiggle.addCurve(to: CGPoint(x: (origin.x + 21), y: origin.y), controlPoint1: CGPoint(x: (origin.x + 10.5), y: (origin.y + 8.75)), controlPoint2: CGPoint(x: (origin.x + 17.5), y: origin.y))
+                    squiggle.addCurve(to: CGPoint(x: (origin.x + 5.25), y: (origin.y + 19.25)), controlPoint1: CGPoint(x: (origin.x + 26.25), y: CGFloat(origin.y + 3.5)), controlPoint2: CGPoint(x: (origin.x + 15.75), y: (origin.y + 21)))
+                    squiggle.addCurve(to: CGPoint(x: CGFloat(origin.x - 21), y: (origin.y + 19.25)), controlPoint1: CGPoint(x: (origin.x - 10.5), y: (origin.y + 10.5)), controlPoint2: CGPoint(x: (origin.x - 10.5), y: (origin.y + 21)))
+                    squiggle.addCurve(to: origin, controlPoint1: CGPoint(x: (origin.x - 22.75), y: (origin.y + 7)), controlPoint2: CGPoint(x: (origin.x - 7), y: (origin.y - 3.5)))
                     squiggle.close()
                 }
                 color.setStroke()
@@ -180,9 +180,9 @@ class CardView: UIButton {
                 
                 for origin in numberOfElements {
                     diamond.move(to: origin)
-                    diamond.addLine(to: CGPoint(x: (origin.x + 30), y: (origin.y + 15)))
-                    diamond.addLine(to: CGPoint(x: origin.x, y: (origin.y + 30)))
-                    diamond.addLine(to: CGPoint(x: (origin.x - 30), y: (origin.y + 15)))
+                    diamond.addLine(to: CGPoint(x: (origin.x + 21), y: (origin.y + 10.5)))
+                    diamond.addLine(to: CGPoint(x: origin.x, y: (origin.y + 21)))
+                    diamond.addLine(to: CGPoint(x: (origin.x - 21), y: (origin.y + 10.5)))
                     diamond.close()
                 }
                 

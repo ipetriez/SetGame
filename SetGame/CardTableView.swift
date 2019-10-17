@@ -14,7 +14,7 @@ class CardTableView: SetGameMainSuperView {
     
     
     //MARK: The grid in charge of generating the calculated frame of each contained button.
-    var grid = Grid(layout: Grid.Layout.aspectRatio(5.5/8))
+    var grid = Grid(layout: Grid.Layout.aspectRatio(5/8))
     
     
     //MARK: The centered rect in which the buttons are going to be positioned.
@@ -23,7 +23,7 @@ class CardTableView: SetGameMainSuperView {
             return CGRect(x: bounds.size.width * 0.025,
                           y: bounds.size.height * 0.025,
                           width: bounds.size.width * 0.95,
-                          height: bounds.size.height * 0.95)
+                          height: bounds.size.height)
         }
     }
     
@@ -37,9 +37,9 @@ class CardTableView: SetGameMainSuperView {
         for (i, card) in cardTable.enumerated() {
             if let frame = grid[i] {
                 card.frame = frame
-                card.layer.cornerRadius = 7
-                card.layer.borderColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
-                card.layer.borderWidth = 0.5
+                card.layer.cornerRadius = 12
+                card.layer.borderColor = #colorLiteral(red: 0.6642242074, green: 0.6642400622, blue: 0.6642315388, alpha: 1)
+                card.layer.borderWidth = 1.5
             }
         }
     }

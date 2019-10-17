@@ -9,68 +9,70 @@
 import UIKit
 
 class ViewController: UIViewController {
-    //MARK: Outlet for the label.
-    @IBOutlet private weak var consoleLabel: UILabel!
+    
+    //MARK: Refference to the Model.
+    private lazy var game = SetGame(numberOfCards: 12)
     
     
-    //MARK: Outlet for the CardTableView.
-    @IBOutlet weak var cardsContainerView: CardTableView!
-    
-    
-    // MARK: Outlet for the "New game" button.
-    @IBAction private func newGame(_ sender: UIButton) {
-        game.startNewGame()
-        
-        while cardsContainerView.subviews.count > 12 {
-            cardsContainerView.subviews.last?.removeFromSuperview()
-        }
-        updateViewFromModel()
-    }
-    
-    //MARK: Outlet for the "3 more cards" button.
-    @IBAction private func openThreeMoreCards(_ sender: UIButton) {
-        if !game.currentDeck.isEmpty {
-            //TODO: Write some code that deals 3 more cards each time the button is pressed.
-        } else {
-            consoleLabel.text = "There's no more cards in the deck."
-        }
-    }
-    
-    //MARK: Outlet for the "Find a set" button.
-    @IBAction func findSet(_ sender: UIButton) {
-        game.findSet()
-        print(game.foundSetArray)
-        updateViewFromModel()
-        if game.foundSetArray.isEmpty {
-            consoleLabel.text = "There is no set on the board."
+    //MARK: View, containing all the cards.
+    @IBOutlet weak var cardsContainerView: CardTableView! {
+        didSet {
+            
+            let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(shuffleCards))
+            cardsContainerView.addGestureRecognizer(rotationGesture)
+            
+            let swipeDownGesture = UISwipeGestureRecognizer(target: self, action: #selector(dealThreeMoreCards))
+            swipeDownGesture.direction = .down
+            cardsContainerView.addGestureRecognizer(swipeDownGesture)
+ 
         }
     }
     
     
-    //MARK: Action for touching card event.
-    @IBAction private func touchCard(_ sender: UIButton) {
-        let temp = game.matchedCards.count
-        if let index = cardsContainerView.subviews.firstIndex(of: sender) {
-            game.chooseCard(at: index)
+    //MARK: Makes cards on the table clickable.
+    private func assignTargetActionToButtons() {
+        for button in cardsContainerView.cardTable {
+            button.addTarget(self, action: #selector(selectOrDeselectACard(_:)), for: .touchUpInside)
         }
-        
-        if cardsContainerView.subviews.count > 12 {
-            if temp != game.matchedCards.count {
-                while cardsContainerView.subviews.count > 12 {
-                    cardsContainerView.subviews.last?.removeFromSuperview()
-                }
+    }
+    
+    
+    //MARK: Responds to tapGesture.
+    @objc func selectOrDeselectACard(_ sender: UIButton) {
+        let index = cardsContainerView.cardTable.firstIndex(of: sender as! CardView)!
+        game.chooseCard(at: index)
+        if !game.foundSetArray.isEmpty {
+            if let itemToBeDeleted = game.foundSetArray.firstIndex(of: index) {
+                game.foundSetArray.remove(at: itemToBeDeleted)
+            } else {
+                game.foundSetArray.removeAll()
             }
         }
         updateViewFromModel()
     }
     
     
-    //MARK: Refference to the Model of this game.
-    private lazy var game = SetGame(numberOfCards: 12)
+    //MARK: Responds to swipeDownGesture.
+    @objc func dealThreeMoreCards() {
+        if cardsContainerView.subviews.count <= 21 {
+            openThreeMoreCards(openThreeMoreCardsButton)
+            updateViewFromModel()
+        }
+    }
     
     
+    //MARK: Responds to rotationGesture.
+    @objc func shuffleCards() {
+        game.shuffle(cards: &game.cardTable)
+        updateViewFromModel()
+    }
     
-    //MARK: This property is used by label to decide what to display.
+    
+    //MARK: Outlet for the label.
+    @IBOutlet private weak var consoleLabel: UILabel!
+    
+    
+    //MARK: This property is used by the label to decide what to display.
     private(set) var numberOfSets = 0 {
         didSet {
             switch numberOfSets {
@@ -82,132 +84,137 @@ class ViewController: UIViewController {
         }
     }
     
-    //MARK: Updates view from mode.
+    
+    // MARK: Outlet for the "New game" button.
+    @IBAction private func newGame(_ sender: UIButton) {
+        game.startNewGame()
+        cardsContainerView.layoutSubviews()
+        updateViewFromModel()
+    }
+    
+    
+    //MARK: Outlet for the "3 more cards" button.
+    @IBOutlet weak var openThreeMoreCardsButton: UIButton!
+    @IBAction private func openThreeMoreCards(_ sender: UIButton) {
+        if !game.currentDeck.isEmpty {
+            game.dealCards()
+            cardsContainerView.addCards(byAmount: 3)
+            assignTargetActionToButtons()
+        } else {
+            consoleLabel.text = "There's no more cards in the deck."
+        }
+        updateViewFromModel()
+    }
+    
+    
+    //MARK: Outlet for the "Find a set" button.
+    @IBAction func findSet(_ sender: UIButton) {
+        game.findSet()
+        for _ in 1...5 {
+            if game.foundSetArray.isEmpty {
+                shuffleCards()
+                game.findSet()
+            }
+        }
+        print(game.foundSetArray)
+        updateViewFromModel()
+        if game.foundSetArray.isEmpty {
+            consoleLabel.text = "There is no set on the board."
+        }
+    }
+    
+    
+    //MARK: Updates view from model.
     private func updateViewFromModel() {
         
+        // Updates label's text.
+        numberOfSets = game.numberOfSets
+        
+        // Removes excessive subviews from cardsContainerView
         if cardsContainerView.cardTable.count > game.cardTable.count {
             cardsContainerView.removeCards(byAmount: cardsContainerView.cardTable.count - game.cardTable.count)
         }
         
-        for (index, cardButton) in cardsContainerView.cardTable.enumerated() {
-            let currentCard = game.cardTable[index]
+        // Hides and unhides "3 more cards" button.
+        if cardsContainerView.subviews.count > 21 || game.currentDeck.isEmpty {
+            openThreeMoreCardsButton.isHidden = true
+        } else {
+            openThreeMoreCardsButton.isHidden = false
+        }
+        
+        // Matching cards from model with the views in cardsContainerView
+        for (index, cardView) in cardsContainerView.cardTable.enumerated() {
+            let setCard = game.cardTable[index]
             
-            // Color feature:
-            switch currentCard.color {
+            switch setCard.color {
             case "Green":
-                cardButton.color = #colorLiteral(red: 0.07156927139, green: 0.8168805242, blue: 0.09210438281, alpha: 1)
+                cardView.color = #colorLiteral(red: 0.07156927139, green: 0.8168805242, blue: 0.09210438281, alpha: 1)
             case "Purple":
-                cardButton.color = .purple
+                cardView.color = #colorLiteral(red: 0.3828546895, green: 0.132271503, blue: 0.6935838298, alpha: 1)
             case "Red":
-                cardButton.color = .red
+                cardView.color = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
             default:
                 break
             }
             
-            // Number feature:
-            switch currentCard.numberOfObjects {
+            switch setCard.numberOfObjects {
             case 1:
-                cardButton.numberOfObjects = 1
+                cardView.numberOfObjects = 1
             case 2:
-                cardButton.numberOfObjects = 2
+                cardView.numberOfObjects = 2
             case 3:
-                cardButton.numberOfObjects = 3
+                cardView.numberOfObjects = 3
             default:
                 break
             }
             
-            // Shading feature:
-            switch currentCard.shading {
+            switch setCard.shading {
             case "Open":
-                cardButton.shading = .open
+                cardView.shading = .open
             case "Solid":
-                cardButton.shading = .solid
+                cardView.shading = .solid
             case "Striped":
-                cardButton.shading = .striped
+                cardView.shading = .striped
             default:
                 break
             }
             
-            
-            // Shape feature:
-            switch currentCard.shape {
+            switch setCard.shape {
             case "Diamond":
-                cardButton.shape = .diamond
+                cardView.shape = .diamond
             case "Squiggle":
-                cardButton.shape = .squiggle
+                cardView.shape = .squiggle
             case "Oval":
-                cardButton.shape = .oval
+                cardView.shape = .oval
             default:
                 break
             }
             
-            // Selection:
-            if game.matchingArray.contains(currentCard) ||
-                game.matchedCards.contains(currentCard) {
-                cardButton.layer.backgroundColor = #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)
+            // Shows selection, when cards are touched.
+            if game.selectedCards.contains(game.cardTable[index]) {
+                cardsContainerView.cardTable[index].layer.borderWidth = 3
+                cardsContainerView.cardTable[index].layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
             } else {
-                cardButton.layer.backgroundColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 0.849352542)
+                cardsContainerView.cardTable[index].layer.borderWidth = 1.5
+                cardsContainerView.cardTable[index].layer.borderColor = #colorLiteral(red: 0.6642242074, green: 0.6642400622, blue: 0.6642315388, alpha: 1)
             }
             
-        }
-        
-        consoleLabel.text = "Number of sets found: \(numberOfSets)"
-        
-        handleDealMoreButton()
-        
-        
-        
-        
-        numberOfSets = game.numberOfSets
-        for index in game.cardTable.indices {
-            let button = cardsContainerView.subviews[index]
-            let card = game.cardTable[index]
-            button.layer.cornerRadius = 8.0
-            
-            if game.foundSetArray.count > 3 {
+            // Highlights sought cards when the "Find a Set" button is touched.
+            if !game.foundSetArray.isEmpty {
                 for number in game.foundSetArray {
-                    cardsContainerView.subviews[number].layer.backgroundColor = #colorLiteral(red: 0.9995340705, green: 0.988355577, blue: 0.4726552367, alpha: 0.7518193493)
-                }
-            } else if game.foundSetArray.count < 3 {
-                for index in cardsContainerView.subviews.indices {
-                    cardsContainerView.subviews[index].layer.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
-                }
-            }
-            
-            
-            if game.matchingArray.contains(game.cardTable[index]) {
-                cardsContainerView.subviews[index].layer.borderWidth = 3.0
-                cardsContainerView.subviews[index].layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
-            } else {
-                cardsContainerView.subviews[index].layer.borderWidth = 0
-                cardsContainerView.subviews[index].layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1)
-            }
-            
-            if game.matchingArray.count == 3 && game.qualify(array: game.matchingArray) == true {
-                consoleLabel.text = "It's a set!"
-                game.foundSetArray.removeAll()
-            } else if game.matchingArray.count == 3 && game.qualify(array: game.matchingArray) == false {
-                consoleLabel.text = "It's not a set."
-            }
-            
-            for card in cardsContainerView.subviews {
-                if game.matchingArray.isEmpty {
-                    card.layer.borderWidth = 0
+                    cardsContainerView.cardTable[number].layer.borderWidth = 3
+                    cardsContainerView.cardTable[number].layer.borderColor = #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1)
                 }
             }
         }
     }
     
-    
-    func handleDealMoreButton() {
-        //openThreeMoreCards.isEnabled = game.currentDeck.count > 3
-    }
     
     //MARK: Life cycle
     override func viewDidLoad() {
         cardsContainerView.addCards(byAmount: game.cardTable.count)
+        assignTargetActionToButtons()
         updateViewFromModel()
     }
-    
 }
 

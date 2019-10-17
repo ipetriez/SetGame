@@ -14,7 +14,7 @@ struct SetGame {
     var currentDeck = [Card]()
     var cardTable = [Card]()
     private(set) var matchedCards = [Card]()
-    private(set) var matchingArray = [Card]()
+    private(set) var selectedCards = [Card]()
     var foundSetArray = [Int]()
     private(set) var numberOfSets = 0
     
@@ -41,34 +41,33 @@ struct SetGame {
         assert(cardTable.indices.contains(index), "SetGame.chooseCard(at: \(index)): The card at chosen index is not on the card table now.")
         
         if !cardTable[index].isMatched {
-            if matchingArray.count < 3 && !matchingArray.contains(cardTable[index]) {
-                matchingArray.append(cardTable[index])
+            if selectedCards.count < 3 && !selectedCards.contains(cardTable[index]) {
+                selectedCards.append(cardTable[index])
                 print(index)
                 print(cardTable[index])
-            } else if matchingArray.count == 3 && !matchingArray.contains(cardTable[index]) {
-                if qualify(array: matchingArray) == true {
+            } else if selectedCards.count == 3 && !selectedCards.contains(cardTable[index]) {
+                if qualify(array: selectedCards) == true {
                     print("It's set!")
                     numberOfSets += 1
-                    for _ in 0..<matchingArray.count {
+                    for _ in 0..<selectedCards.count {
                         if !currentDeck.isEmpty {
                             if cardTable.count <= 12 {
-                                matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: matchingArray.removeFirst())!))
+                                matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: selectedCards.removeFirst())!))
                                 cardTable.append(currentDeck.remove(at: currentDeck.count.arc4random))
                             } else {
-                                matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: matchingArray.removeFirst())!))
+                                matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: selectedCards.removeFirst())!))
                             }
                         } else {
-                            let index = cardTable.firstIndex(of: matchingArray.removeFirst())
-                            cardTable[index!].isMatched = true
+                            matchedCards.append(cardTable.remove(at: cardTable.firstIndex(of: selectedCards.removeFirst())!))
                         }
                     }
                 } else {
                     print("It's not a set.")
-                    matchingArray.removeAll()
+                    selectedCards.removeAll()
                 }
             } else {
-                if let index = matchingArray.firstIndex(of: cardTable[index]) {
-                    matchingArray.remove(at: index)
+                if let index = selectedCards.firstIndex(of: cardTable[index]) {
+                    selectedCards.remove(at: index)
                 }
             }
         }
@@ -133,6 +132,9 @@ struct SetGame {
                 }
             }
         }
+        while foundSetArray.count > 3 {
+            foundSetArray.removeLast()
+        }
     }
     
     
@@ -168,6 +170,17 @@ struct SetGame {
     }
     
     
+    //MARK: Shuffles any array of cards.
+    func shuffle(cards: inout [Card]) {
+        var tempArray = cards
+        var newArray = [Card]()
+        for _ in 1...cards.count {
+            newArray.append(tempArray.remove(at: tempArray.count.arc4random))
+        }
+        cards = newArray
+    }
+    
+    
     //MARK: This function is responsible for the "New game" button operation.
     mutating func startNewGame() {
         for index in matchedCards.indices {
@@ -178,7 +191,8 @@ struct SetGame {
         }
         cardTable.removeAll()
         matchedCards.removeAll()
-        matchingArray.removeAll()
+        selectedCards.removeAll()
+        foundSetArray.removeAll()
         
         for index in currentDeck.indices {
             currentDeck[index].isMatched = false
