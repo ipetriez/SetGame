@@ -10,15 +10,15 @@ import UIKit
 
 class CardTableView: SetGameMainSuperView {
     
-    var cardTable = [CardView]()
+    private(set) var cardTable = [CardView]()
     
     
     //MARK: The grid in charge of generating the calculated frame of each contained button.
-    var grid = Grid(layout: Grid.Layout.aspectRatio(5/8))
+    private var grid = Grid(layout: Grid.Layout.aspectRatio(5/8))
     
     
     //MARK: The centered rect in which the buttons are going to be positioned.
-    var centeredRect: CGRect {
+    private var centeredRect: CGRect {
         get {
             return CGRect(x: bounds.size.width * 0.025,
                           y: bounds.size.height * 0.025,
@@ -73,25 +73,5 @@ class CardTableView: SetGameMainSuperView {
       grid.cellCount = cardTable.count
       
       setNeedsLayout()
-    }
-    
-    //MARK: Removes all cards from the container.
-    func clearCardContainer() {
-      cardTable = []
-      grid.cellCount = 0
-      removeAllSubviews()
-      setNeedsLayout()
-    }
-    
-}
-
-
-extension UIView {
-    
-    /// Removes all subviews.
-    func removeAllSubviews() {
-        for subview in subviews {
-            subview.removeFromSuperview()
-        }
     }
 }

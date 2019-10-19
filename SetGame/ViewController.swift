@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     
     
     //MARK: View, containing all the cards.
-    @IBOutlet weak var cardsContainerView: CardTableView! {
+    @IBOutlet private weak var cardsContainerView: CardTableView! {
         didSet {
             
             let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(shuffleCards))
@@ -41,6 +41,7 @@ class ViewController: UIViewController {
     @objc func selectOrDeselectACard(_ sender: UIButton) {
         let index = cardsContainerView.cardTable.firstIndex(of: sender as! CardView)!
         game.chooseCard(at: index)
+        
         if !game.foundSetArray.isEmpty {
             if let itemToBeDeleted = game.foundSetArray.firstIndex(of: index) {
                 game.foundSetArray.remove(at: itemToBeDeleted)
@@ -49,6 +50,9 @@ class ViewController: UIViewController {
             }
         }
         updateViewFromModel()
+        if game.selectedCards.count == 3 && game.qualify(array: game.selectedCards) == false {
+            consoleLabel.text = "It's not a set."
+        }
     }
     
     
@@ -100,15 +104,13 @@ class ViewController: UIViewController {
             game.dealCards()
             cardsContainerView.addCards(byAmount: 3)
             assignTargetActionToButtons()
-        } else {
-            consoleLabel.text = "There's no more cards in the deck."
-        }
+        } 
         updateViewFromModel()
     }
     
     
     //MARK: Outlet for the "Find a set" button.
-    @IBAction func findSet(_ sender: UIButton) {
+    @IBAction private func findSet(_ sender: UIButton) {
         game.findSet()
         for _ in 1...5 {
             if game.foundSetArray.isEmpty {

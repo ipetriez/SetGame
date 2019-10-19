@@ -11,7 +11,7 @@ import Foundation
 struct SetGame {
     
     //MARK: All stored properties.
-    var currentDeck = [Card]()
+    private(set) var currentDeck = [Card]()
     var cardTable = [Card]()
     private(set) var matchedCards = [Card]()
     private(set) var selectedCards = [Card]()
