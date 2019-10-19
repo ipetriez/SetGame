@@ -42,6 +42,7 @@ class ViewController: UIViewController {
         let index = cardsContainerView.cardTable.firstIndex(of: sender as! CardView)!
         game.chooseCard(at: index)
         
+        /// This piece of code is necessary for deselecting those 3 cards that got highlighted, when "Find a Set" button was tapped, as the user selects each of those cards.
         if !game.foundSetArray.isEmpty {
             if let itemToBeDeleted = game.foundSetArray.firstIndex(of: index) {
                 game.foundSetArray.remove(at: itemToBeDeleted)
@@ -49,6 +50,7 @@ class ViewController: UIViewController {
                 game.foundSetArray.removeAll()
             }
         }
+        
         updateViewFromModel()
         if game.selectedCards.count == 3 && game.qualify(array: game.selectedCards) == false {
             consoleLabel.text = "It's not a set."
